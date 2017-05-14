@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">DistributedAssignment</string>
+    <string name="sendMessage">Send Message</string>
+    <string name="sendContact">Send Contact</string>
 </resources>
