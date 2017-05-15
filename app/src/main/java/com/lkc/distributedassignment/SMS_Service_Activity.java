@@ -1,5 +1,6 @@
 package com.lkc.distributedassignment;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -25,7 +26,8 @@ public class SMS_Service_Activity extends AppCompatActivity implements View.OnCl
     @Override
     public void onClick(View v) {
         if(v == composeMessage){
-
+            Intent intent = new Intent(this, ComposeSMSActivity.class);
+            startActivity(intent);
         }
 
         else if(v == inbox){
