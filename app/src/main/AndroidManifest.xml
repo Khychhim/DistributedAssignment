@@ -3,7 +3,8 @@
     package="com.lkc.distributedassignment">
 
     <uses-permission android:name="android.permission.NFC" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
 
     <uses-feature
         android:name="android.hardware.nfc"
@@ -23,6 +24,15 @@
         </activity>
         <activity android:name=".activity_send_message"></activity>
         <activity android:name=".activity_send_contact">
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activity_receive_contact">
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
 

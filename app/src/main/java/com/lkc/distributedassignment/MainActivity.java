@@ -22,4 +22,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, activity_send_contact.class);
         startActivity(intent);
     }
+
+    public void receiveContact(View view) {
+        Intent intent = new Intent(this, activity_receive_contact.class);
+        startActivity(intent);
+    }
 }
