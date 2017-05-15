@@ -1,6 +1,7 @@
 package com.lkc.distributedassignment;
 
 import android.Manifest;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -30,7 +31,6 @@ public class activity_receive_contact extends FragmentActivity {
     private static final int REQUEST_PERMISSION_CODE = 1;
     private ArrayList<String> dataReceived = new ArrayList<>();
     private boolean hasPermission;
-    private NfcAdapter nfcAdapter;
 
     private TextView waitingText;
     private Button addContact;
@@ -40,8 +40,8 @@ public class activity_receive_contact extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive_contact);
         EnableRuntimePermission();
-        
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+
+        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if(nfcAdapter == null) {
             Toast.makeText(this, "NFC not available on this device", Toast.LENGTH_SHORT).show();
             finish();
@@ -69,7 +69,16 @@ public class activity_receive_contact extends FragmentActivity {
     @Override
     public void onResume() {
         super.onResume();
-        handleNfcIntent(getIntent());
+        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        nfcAdapter.disableForegroundDispatch(this);
     }
 
     public void addToContacts(View view) {
@@ -116,12 +125,14 @@ public class activity_receive_contact extends FragmentActivity {
     }
 
     private void handleNfcIntent(Intent nfcIntent) {
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(nfcIntent.getAction())) {
+        if(nfcIntent != null && NfcAdapter.ACTION_NDEF_DISCOVERED.equals(nfcIntent.getAction()) ||
+                NfcAdapter.ACTION_TECH_DISCOVERED.equals(nfcIntent.getAction()) ||
+                NfcAdapter.ACTION_TAG_DISCOVERED.equals(nfcIntent.getAction())) {
             waitingText.setText("Recieving...");
             Parcelable[] receivedArray =
                     nfcIntent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
 
-            if (receivedArray != null) {
+            if(receivedArray != null) {
                 dataReceived.clear();
                 NdefMessage receivedMessage = (NdefMessage) receivedArray[0];
                 NdefRecord[] attachedRecords = receivedMessage.getRecords();

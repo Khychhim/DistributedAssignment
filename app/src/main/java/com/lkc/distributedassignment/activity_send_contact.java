@@ -16,8 +16,8 @@ import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.nio.charset.Charset;
@@ -37,7 +37,7 @@ public class activity_send_contact extends FragmentActivity
     private EditText mobileNumber;
     private EditText homePhone;
     private EditText email;
-    private Button sendContact;
+    private TextView waitingToSend;
 
     private boolean hasPermission = false;
 
@@ -52,12 +52,8 @@ public class activity_send_contact extends FragmentActivity
         mobileNumber = (EditText) findViewById(R.id.mobileNumber);
         homePhone = (EditText) findViewById(R.id.homePhone);
         email = (EditText) findViewById(R.id.email);
-        sendContact = (Button) findViewById(R.id.send);
+        waitingToSend = (TextView) findViewById(R.id.waitingToSend);
         EnableRuntimePermission();
-    }
-
-    public void send(View view) {
-
     }
 
     @Override
@@ -117,13 +113,12 @@ public class activity_send_contact extends FragmentActivity
                     dataToSend.add(HOME, homePhone.getText().toString());
                     dataToSend.add(EMAIL, email.getText().toString());
 
-                    sendContact.setEnabled(true);
+                    waitingToSend.setText("Move Devices close to Send.");
                 }
         }
     }
 
     public void searchContacts(View view) {
-        //EnableRuntimePermission();
         if(hasPermission) {
             Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
             startActivityForResult(intent, PICK_CONTACT);
@@ -186,6 +181,7 @@ public class activity_send_contact extends FragmentActivity
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
         if(dataToSend.size() == 0) return null;
+        waitingToSend.setText("Sending contact");
 
         NdefRecord[] records = createRecords();
 
@@ -194,6 +190,7 @@ public class activity_send_contact extends FragmentActivity
 
     @Override
     public void onNdefPushComplete(NfcEvent event) {
+        waitingToSend.setText("Contact sent");
         dataToSend.clear();
     }
 }
