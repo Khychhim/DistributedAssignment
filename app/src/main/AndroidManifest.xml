@@ -4,6 +4,9 @@
 
     <uses-permission android:name="android.permission.NFC" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+
 
     <uses-feature
         android:name="android.hardware.nfc"
@@ -21,7 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity_send_message"></activity>
+        <activity android:name=".SMS_Service_Activity"></activity>
         <activity android:name=".activity_send_contact">
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />

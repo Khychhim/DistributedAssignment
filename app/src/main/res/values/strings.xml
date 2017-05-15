@@ -2,4 +2,7 @@
     <string name="app_name">DistributedAssignment</string>
     <string name="sendMessage">Send Message</string>
     <string name="sendContact">Send Contact</string>
+    <string name="composeSMS">Compose message</string>
+    <string name="inboxSMS">Inbox</string>
+    <string name="sentSMS">Sent message</string>
 </resources>
