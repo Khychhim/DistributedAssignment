@@ -13,6 +13,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+/**
+ * class to compose a new message
+ */
 public class ComposeSMSActivity extends AppCompatActivity implements View.OnClickListener{
     Button buttonSend;
     EditText etPhoneNumber,etMessageContent;
@@ -35,11 +38,11 @@ public class ComposeSMSActivity extends AppCompatActivity implements View.OnClic
         if(v == buttonSend){
             phoneNumber = etPhoneNumber.getText().toString();
             messageContent = etMessageContent.getText().toString();
-
+            //avoid empty message body
             if(messageContent.isEmpty()){
                 messageContent = " ";
             }
-
+            //avoid no phone number input
             if(phoneNumber.isEmpty()){
                 Toast.makeText(getApplicationContext(), "Please enter phone number",Toast.LENGTH_SHORT).show();
             }
@@ -50,7 +53,7 @@ public class ComposeSMSActivity extends AppCompatActivity implements View.OnClic
                 }else{
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS},REQUEST_SEND_SMS);
                 }
-            }else{
+            }else{//send the message
                 SmsManager smsManager = SmsManager.getDefault();
                 smsManager.sendTextMessage(phoneNumber, null, messageContent, null, null);
                 Toast.makeText(getApplicationContext(), "SMS sent",Toast.LENGTH_SHORT).show();
@@ -64,7 +67,7 @@ public class ComposeSMSActivity extends AppCompatActivity implements View.OnClic
         switch(requestCode){
             case REQUEST_SEND_SMS:
                 if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED){//send the message
                         SmsManager smsManager = SmsManager.getDefault();
                         smsManager.sendTextMessage(phoneNumber, null, messageContent, null, null);
                         Toast.makeText(getApplicationContext(), "SMS sent",Toast.LENGTH_SHORT).show();

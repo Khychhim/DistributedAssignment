@@ -6,8 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+/**
+ * class for sms service
+ */
 public class SMS_Service_Activity extends AppCompatActivity implements View.OnClickListener {
-    Button composeMessage, inbox, sentMessage;
+    Button composeMessage, inbox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,11 +18,9 @@ public class SMS_Service_Activity extends AppCompatActivity implements View.OnCl
         setContentView(R.layout.activity_sms_service);
         composeMessage = (Button)findViewById(R.id.buttonCompose);
         inbox = (Button)findViewById(R.id.buttonInbox);
-        sentMessage = (Button)findViewById(R.id.buttonSentSMS);
 
         composeMessage.setOnClickListener(this);
         inbox.setOnClickListener(this);
-        sentMessage.setOnClickListener(this);
 
     }
 
@@ -31,12 +32,8 @@ public class SMS_Service_Activity extends AppCompatActivity implements View.OnCl
         }
 
         else if(v == inbox){
-            Intent intent = new Intent(this, inboxActivity.class);
+            Intent intent = new Intent(this, InboxActivity.class);
             startActivity(intent);
-        }
-
-        else if(v == sentMessage){
-
         }
     }
 
