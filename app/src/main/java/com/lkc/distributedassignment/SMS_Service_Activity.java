@@ -31,7 +31,8 @@ public class SMS_Service_Activity extends AppCompatActivity implements View.OnCl
         }
 
         else if(v == inbox){
-
+            Intent intent = new Intent(this, inboxActivity.class);
+            startActivity(intent);
         }
 
         else if(v == sentMessage){

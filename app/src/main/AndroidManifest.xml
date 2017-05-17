@@ -33,7 +33,8 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-        <activity android:name=".ComposeSMSActivity"></activity>
+        <activity android:name=".ComposeSMSActivity" />
+        <activity android:name=".inboxActivity"></activity>
     </application>
 
 </manifest>
