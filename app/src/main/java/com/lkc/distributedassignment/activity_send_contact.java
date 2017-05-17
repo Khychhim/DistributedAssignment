@@ -2,7 +2,9 @@ package com.lkc.distributedassignment;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -42,11 +44,22 @@ public class activity_send_contact extends FragmentActivity
     private boolean hasPermission = false;
 
     private ArrayList<String> dataToSend = new ArrayList<>();
+    private NfcAdapter nfcAdapter;
+    private PendingIntent nfcPendingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_contact);
+
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        if(nfcAdapter == null) {
+            Toast.makeText(this, "NFC not available on this device", Toast.LENGTH_SHORT).show();
+            finish();
+        } else {
+            nfcAdapter.setNdefPushMessageCallback(this, this);
+            nfcAdapter.setOnNdefPushCompleteCallback(this, this);
+        }
 
         contactName = (EditText) findViewById(R.id.contactName);
         mobileNumber = (EditText) findViewById(R.id.mobileNumber);
@@ -146,7 +159,8 @@ public class activity_send_contact extends FragmentActivity
                     hasPermission = true;
                 } else {
                     Toast.makeText(activity_send_contact.this,"Permission Canceled, " +
-                            "Application needs permission to access contact data", Toast.LENGTH_LONG).show();
+                            "Application needs permission to access contact data and use NFC",
+                            Toast.LENGTH_LONG).show();
                 }
                 break;
         }
@@ -180,6 +194,7 @@ public class activity_send_contact extends FragmentActivity
 
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
+        waitingToSend.setText("Nothing to send");
         if(dataToSend.size() == 0) return null;
         waitingToSend.setText("Sending contact");
 

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.nfc.NdefMessage;
@@ -34,6 +35,8 @@ public class activity_receive_contact extends FragmentActivity {
 
     private TextView waitingText;
     private Button addContact;
+    private PendingIntent nfcPendingIntent;
+    private NfcAdapter nfcAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +44,7 @@ public class activity_receive_contact extends FragmentActivity {
         setContentView(R.layout.activity_receive_contact);
         EnableRuntimePermission();
 
-        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if(nfcAdapter == null) {
             Toast.makeText(this, "NFC not available on this device", Toast.LENGTH_SHORT).show();
             finish();
@@ -53,7 +56,6 @@ public class activity_receive_contact extends FragmentActivity {
         addContact.setEnabled(false);
         waitingText.setVisibility(View.VISIBLE);
         waitingText.setText("Waiting to Recieve Contact");
-
     }
 
     @Override
@@ -62,23 +64,14 @@ public class activity_receive_contact extends FragmentActivity {
     }
 
     @Override
-    public void onNewIntent(Intent intent) {
-        handleNfcIntent(intent);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
-        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-        nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
+        handleNfcIntent(getIntent());
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        nfcAdapter.disableForegroundDispatch(this);
+    public void onNewIntent(Intent intent) {
+        handleNfcIntent(intent);
     }
 
     public void addToContacts(View view) {
@@ -118,16 +111,15 @@ public class activity_receive_contact extends FragmentActivity {
                     hasPermission = true;
                 } else {
                     Toast.makeText(activity_receive_contact.this, "Permission Canceled, " +
-                            "Application needs permission to access contact data", Toast.LENGTH_LONG).show();
+                            "Application needs permission to access contact data and use NFC",
+                            Toast.LENGTH_LONG).show();
                 }
                 break;
         }
     }
 
     private void handleNfcIntent(Intent nfcIntent) {
-        if(nfcIntent != null && NfcAdapter.ACTION_NDEF_DISCOVERED.equals(nfcIntent.getAction()) ||
-                NfcAdapter.ACTION_TECH_DISCOVERED.equals(nfcIntent.getAction()) ||
-                NfcAdapter.ACTION_TAG_DISCOVERED.equals(nfcIntent.getAction())) {
+        if(nfcIntent != null && NfcAdapter.ACTION_NDEF_DISCOVERED.equals(nfcIntent.getAction())) {
             waitingText.setText("Recieving...");
             Parcelable[] receivedArray =
                     nfcIntent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
@@ -137,10 +129,10 @@ public class activity_receive_contact extends FragmentActivity {
                 NdefMessage receivedMessage = (NdefMessage) receivedArray[0];
                 NdefRecord[] attachedRecords = receivedMessage.getRecords();
 
-                for (NdefRecord record : attachedRecords) {
+                for(NdefRecord record : attachedRecords) {
                     String payload = new String(record.getPayload());
 
-                    if (payload.equals(getPackageName())) continue;
+                    if(payload.equals(getPackageName())) continue;
                     dataReceived.add(payload);
                 }
 
